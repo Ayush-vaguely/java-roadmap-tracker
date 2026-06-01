@@ -12,6 +12,7 @@ export async function getPhasesCount() {
 
   return count ?? 0;
 }
+
 export async function getTopicsCount() {
   const { count, error } = await supabase
     .from("topics")
@@ -24,10 +25,11 @@ export async function getTopicsCount() {
 
   return count ?? 0;
 }
+
 export async function getTopics() {
   const { data, error } = await supabase
     .from("topics")
-    .select("*")
+    .select("id, name, status")
     .order("id");
 
   if (error) {
@@ -36,4 +38,19 @@ export async function getTopics() {
   }
 
   return data;
+}
+export async function completeTopic(topicId: number) {
+  const { error } = await supabase
+    .from("topics")
+    .update({
+      status: "Completed",
+    })
+    .eq("id", topicId);
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+
+  return true;
 }

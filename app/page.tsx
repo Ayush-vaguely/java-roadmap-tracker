@@ -63,9 +63,27 @@ export default async function HomePage() {
     {topics.map((topic) => (
       <Card key={topic.id}>
         <CardContent className="p-4">
-          <p className="font-medium">
-            {topic.name}
-          </p>
+          <div className="flex items-center justify-between">
+  <div>
+    <p className="font-medium">
+      {topic.name}
+    </p>
+
+   <p className="text-sm text-gray-500">
+  Status: {topic.status}
+</p>
+  </div>
+
+ {topic.status !== "Completed" ? (
+  <button className="bg-green-600 text-white px-4 py-2 rounded">
+    Complete
+  </button>
+) : (
+  <span className="bg-blue-600 text-white px-4 py-2 rounded">
+    Completed
+  </span>
+)}
+</div>
         </CardContent>
       </Card>
     ))}
