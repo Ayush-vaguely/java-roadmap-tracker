@@ -173,3 +173,66 @@ export async function getUpcomingDeadlines() {
 
   return data;
 }
+export async function getProjectsCount() {
+  const { count, error } = await supabase
+    .from("projects")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
+  if (error) {
+    console.error(error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+export async function getCompletedProjectsCount() {
+  const { count, error } = await supabase
+    .from("projects")
+    .select("*", {
+      count: "exact",
+      head: true,
+    })
+    .eq("status", "Completed");
+
+  if (error) {
+    console.error(error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+export async function getProjects() {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("id");
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data;
+}
+export async function createProject(
+  name: string,
+  status: string
+) {
+  const { error } = await supabase
+    .from("projects")
+    .insert({
+      name,
+      status,
+    });
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+
+  return true;
+}

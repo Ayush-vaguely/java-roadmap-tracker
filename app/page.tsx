@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { completeTopicAction } from "@/actions/topic-actions";
 import { saveNotesAction } from "@/actions/save-notes-action";
 import { saveDeadlineAction } from "@/actions/save-deadline-action";
+import { createProjectAction } from "@/actions/create-project-action";
 import {
   getPhasesCount,
   getTopicsCount,
@@ -10,6 +11,10 @@ import {
   getProgressPercentage,
   getOverdueTopicsCount,
   getUpcomingDeadlines,
+  getProjectsCount,
+getCompletedProjectsCount,
+getProjects,
+
 } from "@/lib/database";
 
 export default async function HomePage() {
@@ -22,6 +27,11 @@ export default async function HomePage() {
   await getOverdueTopicsCount();
   const upcomingDeadlines =
   await getUpcomingDeadlines();
+  const projectsCount =
+  await getProjectsCount();
+const completedProjectsCount =
+  await getCompletedProjectsCount();
+  const projects = await getProjects();
 
   return (
     <main className="min-h-screen bg-background p-8">
@@ -70,6 +80,23 @@ export default async function HomePage() {
 </p>
             </CardContent>
           </Card>
+          <Card>
+  <CardHeader>
+    <CardTitle>
+      Projects
+    </CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    <p className="text-4xl font-bold">
+      {projectsCount}
+    </p>
+
+    <p className="text-sm text-gray-500 mt-2">
+      Completed: {completedProjectsCount}
+    </p>
+  </CardContent>
+</Card>
         </div>
 
         <Card className="mt-6">
@@ -122,6 +149,76 @@ export default async function HomePage() {
         ))}
       </div>
     )}
+  </CardContent>
+</Card>
+<Card className="mt-6">
+  <CardHeader>
+    <CardTitle>
+      Projects
+    </CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    <form
+  action={createProjectAction}
+  className="mb-4 flex gap-2"
+>
+  <input
+    type="text"
+    name="name"
+    placeholder="Project Name"
+    className="border rounded p-2 flex-1"
+    required
+  />
+
+  <select
+    name="status"
+    className="border rounded p-2"
+  >
+    <option value="Planned">
+      Planned
+    </option>
+
+    <option value="In Progress">
+      In Progress
+    </option>
+
+    <option value="Completed">
+      Completed
+    </option>
+  </select>
+
+  <button
+    type="submit"
+    className="bg-blue-600 text-white px-4 py-2 rounded"
+  >
+    Add Project
+  </button>
+</form>
+    <div className="space-y-3">
+      {projects.map((project) => (
+        <div
+          key={project.id}
+          className="flex items-center justify-between border-b pb-2"
+        >
+          <span className="font-medium">
+            {project.name}
+          </span>
+
+          <span
+            className={`px-3 py-1 rounded text-sm text-white ${
+              project.status === "Completed"
+                ? "bg-green-600"
+                : project.status === "In Progress"
+                ? "bg-yellow-500"
+                : "bg-gray-500"
+            }`}
+          >
+            {project.status}
+          </span>
+        </div>
+      ))}
+    </div>
   </CardContent>
 </Card>
 
