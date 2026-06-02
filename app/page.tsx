@@ -3,6 +3,8 @@ import { completeTopicAction } from "@/actions/topic-actions";
 import { saveNotesAction } from "@/actions/save-notes-action";
 import { saveDeadlineAction } from "@/actions/save-deadline-action";
 import { createProjectAction } from "@/actions/create-project-action";
+import { updateProjectStatusAction } from "@/actions/update-project-status-action";
+import { deleteProjectAction } from "@/actions/delete-project-action";
 import {
   getPhasesCount,
   getTopicsCount,
@@ -16,7 +18,7 @@ getCompletedProjectsCount,
 getProjects,
 
 } from "@/lib/database";
-
+export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const phaseCount = await getPhasesCount();
   const topicCount = await getTopicsCount();
@@ -201,21 +203,60 @@ const completedProjectsCount =
           key={project.id}
           className="flex items-center justify-between border-b pb-2"
         >
+          <form
+  action={async () => {
+    "use server";
+    await deleteProjectAction(
+      project.id
+    );
+  }}
+>
+  <button
+    type="submit"
+    className="bg-red-600 text-white px-2 py-1 rounded ml-2"
+  >
+    Delete
+  </button>
+</form>
           <span className="font-medium">
             {project.name}
           </span>
 
-          <span
-            className={`px-3 py-1 rounded text-sm text-white ${
-              project.status === "Completed"
-                ? "bg-green-600"
-                : project.status === "In Progress"
-                ? "bg-yellow-500"
-                : "bg-gray-500"
-            }`}
-          >
-            {project.status}
-          </span>
+          <form
+  action={async (formData) => {
+    "use server";
+    await updateProjectStatusAction(
+      project.id,
+      formData
+    );
+  }}
+  className="flex gap-2"
+>
+  <select
+    name="status"
+    defaultValue={project.status}
+    className="border rounded p-1"
+  >
+    <option value="Planned">
+      Planned
+    </option>
+
+    <option value="In Progress">
+      In Progress
+    </option>
+
+    <option value="Completed">
+      Completed
+    </option>
+  </select>
+
+  <button
+    type="submit"
+    className="bg-blue-600 text-white px-2 py-1 rounded"
+  >
+    Update
+  </button>
+</form>
         </div>
       ))}
     </div>

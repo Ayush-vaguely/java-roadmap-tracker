@@ -236,3 +236,34 @@ export async function createProject(
 
   return true;
 }
+export async function updateProjectStatus(
+  projectId: number,
+  status: string
+) {
+  const { error } = await supabase
+    .from("projects")
+    .update({ status })
+    .eq("id", projectId);
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+
+  return true;
+}
+export async function deleteProject(
+  projectId: number
+) {
+  const { error } = await supabase
+    .from("projects")
+    .delete()
+    .eq("id", projectId);
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+
+  return true;
+}
